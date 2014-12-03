@@ -50,15 +50,15 @@ class squid3 (
   $template                      = 'long',
 ) inherits ::squid3::params {
 
-  $use_template = $template ? {
-    'short' => 'squid3/squid.conf.short.erb',
-    'long'  => 'squid3/squid.conf.long.erb',
-    default => $template,
-  }
+#  $use_template = $template ? {
+#    'short' => 'squid3/squid.conf.short.erb',
+#    'long'  => 'squid3/squid.conf.long.erb',
+#    default => $template,
+#  }
 
-  if ! empty($config_hash) and $use_template == 'long' {
-    fail('$config_hash does not (yet) work with the "long" template!')
-  }
+#  if ! empty($config_hash) and $use_template == 'long' {
+#    fail('$config_hash does not (yet) work with the "long" template!')
+#  }
 
 
   package { 'squid3_package': ensure => installed, name => $package_name }
@@ -76,8 +76,7 @@ class squid3 (
   file { $config_file:
     require => Package['squid3_package'],
     notify  => Service['squid3_service'],
-    content => template($use_template),
+    content => template('squid3/squid.conf.erb'),
   }
-
 }
 
