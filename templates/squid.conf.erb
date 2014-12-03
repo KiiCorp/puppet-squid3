@@ -1,127 +1,113 @@
-{\rtf1\ansi\ansicpg1252\cocoartf1265\cocoasubrtf190
-{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-\paperw11900\paperh16840\margl1440\margr1440\vieww17840\viewh15720\viewkind0
-\pard\tx566\tx1133\tx1700\tx2267\tx2834\tx3401\tx3968\tx4535\tx5102\tx5669\tx6236\tx6803\pardirnatural
+#
+# Recommended minimum configuration:
+#
+acl manager proto cache_object
+acl localhost src 127.0.0.1/32 ::1
+acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1
 
-\f0\fs24 \cf0 #\
-# Recommended minimum configuration:\
-#\
-acl manager proto cache_object\
-acl localhost src 127.0.0.1/32 ::1\
-acl to_localhost dst 127.0.0.0/8 0.0.0.0/32 ::1\
-\
-# Example rule allowing access from your local networks.\
-# Adapt to list your (internal) IP networks from where browsing\
-# should be allowed\
-acl localnet src 10.0.0.0/8	# RFC1918 possible internal network\
-acl localnet src 172.16.0.0/12	# RFC1918 possible internal network\
-acl localnet src 192.168.0.0/16	# RFC1918 possible internal network\
-acl localnet src fc00::/7       # RFC 4193 local private network range\
-acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines\
-\
-acl SSL_ports port 443\
-acl Safe_ports port 80		# http\
-#acl Safe_ports port 21		# ftp\
-acl Safe_ports port 443	# https\
-acl Safe_ports port 70		# gopher\
-acl Safe_ports port 210		# wais\
-acl Safe_ports port 1025-65535	# unregistered ports\
-acl Safe_ports port 280		# http-mgmt\
-acl Safe_ports port 488		# gss-http\
-acl Safe_ports port 591		# filemaker\
-acl Safe_ports port 777		# multiling http\
-acl CONNECT method CONNECT\
-\
-#for staging\
-acl aliyunservers src 121.41.35.86/32\
-acl aliyunservers src 121.41.35.23/32\
-acl aliyunservers src 121.41.35.238/32\
-acl aliyunservers src 121.41.36.122/32\
-acl aliyunservers src 121.41.36.112/32\
-acl aliyunservers src 121.41.32.121/32\
-acl aliyunservers src 121.40.210.54/32\
-#for production\
-acl aliyunservers src 121.41.109.185/32\
-acl aliyunservers src 121.41.109.5/32\
-acl aliyunservers src 121.41.109.84/32\
-acl aliyunservers src 121.41.106.111/32\
-acl aliyunservers src 121.41.106.129/32\
-acl aliyunservers src 121.41.107.192/32\
-acl aliyunservers src 121.41.54.137/32\
-\
-acl cache_enable_hosts dstdomain static.kii.com\
-acl cache_enable_hosts dstdomain downloads-distro.mongodb.org\
-acl cache_enable_hosts dstdomain fr2.rpmfind.net\
-acl cache_enable_hosts dstdomain mirror.awanti.com\
-acl cache_enable_hosts dstdomain mirror.smartmedia.net.id\
-acl cache_enable_hosts dstdomain mirror5.layerjet.com\
-acl cache_enable_hosts dstdomain mirrors.mediatemple.net\
-acl cache_enable_hosts dstdomain nginx.org\
-acl cache_enable_hosts dstdomain packages.erlang-solutions.com\
-acl cache_enable_hosts dstdomain packages.treasure-data.com\
-acl cache_enable_hosts dstdomain remi.mirrors.arminco.com\
-acl cache_enable_hosts dstdomain remi.schlundtech.de\
-acl cache_enable_hosts dstdomain remirpm.mirror.gymkl.ch\
-acl cache_enable_hosts dstdomain rpms.famillecollet.com\
-acl cache_enable_hosts dstdomain yum.puppetlabs.com\
-\
-#nocache entry\
-acl noCacheURL url_regex ^http://yum\\.puppetlabs\\.com/\
-cache deny noCacheURL\
-\
-#\
-# Recommended minimum Access Permission configuration:\
-#\
-# Only allow cachemgr access from localhost\
-http_access allow manager localhost\
-http_access deny manager\
-\
-# Deny requests to certain unsafe ports\
-http_access deny !Safe_ports\
-\
-# Deny CONNECT to other than secure SSL ports\
-http_access deny CONNECT !SSL_ports\
-\
-# We strongly recommend the following be uncommented to protect innocent\
-# web applications running on the proxy server who think the only\
-# one who can access services on "localhost" is a local user\
-#http_access deny to_localhost\
-\
-#\
-# INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS\
-#\
-\
-# Example rule allowing access from your local networks.\
-# Adapt localnet in the ACL section to list your (internal) IP networks\
-# from where browsing should be allowed\
-http_access allow localnet\
-http_access allow localhost\
-http_access allow aliyunservers\
-always_direct allow !cache_enable_hosts\
-\
-# And finally deny all other access to this proxy\
-http_access deny all\
-\
-# Squid normally listens to port 3128\
-http_port 3128\
-\
-# We recommend you to use at least the following line.\
-hierarchy_stoplist cgi-bin ?\
-\
-# Uncomment and adjust the following to add a disk cache directory.\
-cache_dir ufs /var/spool/squid 5000 16 256\
-\
-# Leave coredumps in the first cache dir\
-coredump_dir /var/spool/squid\
-\
-# Add any of your own refresh_pattern entries above these.\
-refresh_pattern ^ftp:		1440	20%	10080\
-refresh_pattern ^gopher:	1440	0%	1440\
-refresh_pattern -i (/cgi-bin/|\\?) 0	0%	0\
-refresh_pattern .		0	20%	4320\
-\
-#cache_peer infra-jp-jump.internal.kii.com parent 8888 7 no-query\
-maximum_object_size 500000 KB\
-maximum_object_size_in_memory 8 KB\
-cache_store_log /var/log/squid/store.log}
+# Example rule allowing access from your local networks.
+# Adapt to list your (internal) IP networks from where browsing
+# should be allowed
+acl localnet src 10.0.0.0/8	# RFC1918 possible internal network
+acl localnet src 172.16.0.0/12	# RFC1918 possible internal network
+acl localnet src 192.168.0.0/16	# RFC1918 possible internal network
+acl localnet src fc00::/7       # RFC 4193 local private network range
+acl localnet src fe80::/10      # RFC 4291 link-local (directly plugged) machines
+
+acl SSL_ports port 443
+acl Safe_ports port 80		# http
+#acl Safe_ports port 21		# ftp
+acl Safe_ports port 443	# https
+acl Safe_ports port 70		# gopher
+acl Safe_ports port 210		# wais
+acl Safe_ports port 1025-65535	# unregistered ports
+acl Safe_ports port 280		# http-mgmt
+acl Safe_ports port 488		# gss-http
+acl Safe_ports port 591		# filemaker
+acl Safe_ports port 777		# multiling http
+acl CONNECT method CONNECT
+
+# user-defined ACLs
+<% @acl.each do |line| -%>
+acl <%= line %>
+<% end -%>
+
+# user-defined ACLs for forward to origin server
+<% @always_direct.each do |line| -%>
+acl <%= line %>
+<% end -%>
+
+# user-defined nochache entry
+<% @nocache.each do |line| -%>
+acl <%= line %>
+<% end -%>
+#nocache entry
+acl noCacheURL url_regex ^http://yum\.puppetlabs\.com/
+
+<% @nocache_rule_name.each do |line| -%>
+cache deny <%= line %>
+<% end -%>
+ noCacheURL
+
+#
+# Recommended minimum Access Permission configuration:
+#
+# Only allow cachemgr access from localhost
+http_access allow manager localhost
+http_access deny manager
+
+# Deny requests to certain unsafe ports
+http_access deny !Safe_ports
+
+# Deny CONNECT to other than secure SSL ports
+http_access deny CONNECT !SSL_ports
+
+# We strongly recommend the following be uncommented to protect innocent
+# web applications running on the proxy server who think the only
+# one who can access services on "localhost" is a local user
+#http_access deny to_localhost
+
+#
+# INSERT YOUR OWN RULE(S) HERE TO ALLOW ACCESS FROM YOUR CLIENTS
+#
+
+# Example rule allowing access from your local networks.
+# Adapt localnet in the ACL section to list your (internal) IP networks
+# from where browsing should be allowed
+# user-defined http_accesses
+<% @http_access.each do |line| -%>
+http_access <%= line %>
+<% end -%>
+http_access allow localnet
+http_access allow localhost
+
+# user-defined always_direct
+<% @always_direct_rule_name.each do |line| -%>
+always_direct allow !<%= line %>
+<% end -%>
+
+# And finally deny all other access to this proxy
+http_access deny all
+
+# Squid normally listens to port 3128
+http_port <%= @http_port %>
+
+# We recommend you to use at least the following line.
+hierarchy_stoplist cgi-bin ?
+
+# Uncomment and adjust the following to add a disk cache directory.
+cache_dir <%= @cache_dir %>
+
+# Leave coredumps in the first cache dir
+coredump_dir /var/spool/squid
+
+# Add any of your own refresh_pattern entries above these.
+refresh_pattern ^ftp:		1440	20%	10080
+refresh_pattern ^gopher:	1440	0%	1440
+refresh_pattern -i (/cgi-bin/|\?) 0	0%	0
+refresh_pattern .		0	20%	4320
+
+#cache_peer infra-jp-jump.internal.kii.com parent 8888 7 no-query
+maximum_object_size <%= maximum_object_size %>
+maximum_object_size_in_memory <%= maximum_object_size_in_memory %>
+cache_store_log /var/log/squid/store.log
