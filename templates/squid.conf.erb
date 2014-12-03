@@ -41,13 +41,10 @@ acl <%= line %>
 <% @nocache.each do |line| -%>
 acl <%= line %>
 <% end -%>
-#nocache entry
-acl noCacheURL url_regex ^http://yum\.puppetlabs\.com/
 
 <% @nocache_rule_name.each do |line| -%>
 cache deny <%= line %>
 <% end -%>
- noCacheURL
 
 #
 # Recommended minimum Access Permission configuration:
